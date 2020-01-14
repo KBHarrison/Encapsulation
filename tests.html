@@ -1,0 +1,204 @@
+<script>
+const validator = (function () {
+    let is_valid = true;
+
+    return {
+    isNumeric: function (text) { 
+        switch (typeof text) {
+            case "number":
+                break;
+            case "string":
+                this.is_valid = !isNaN(text);
+                break;
+            default:
+                this.is_valid = false;
+                break;
+        }
+        return this.is_valid;
+     },
+    isInteger: function (text) { 
+        if (validator.isNumeric(text)) {
+            if (typeof text === "string") {
+                text = Number(text);
+            }
+            if (!Number.isInteger(text)) {
+                this.is_valid = false;
+                return false;
+            }
+        }
+        else {
+            this.is_valid = false;
+            return false;
+        }
+        return this.is_valid;
+     },
+    isNegativeInteger: function (text) { 
+        if (validator.isInteger(text)) {
+            text = Number(text);
+            if (text < 0) {
+                return true;
+            }
+            else {
+                this.is_valid = false;
+                return false;
+            }
+        }
+        else {
+            this.is_valid = false;
+            return false;
+        }
+     },
+    isPositiveInteger: function (text) { 
+        if (validator.isInteger(text)) {
+            text = Number(text);
+            if (text > 0) {
+                return true;
+            }
+            else {
+                this.is_valid = false;
+                return false;
+            }
+        }
+        else {
+            this.is_valid = false;
+            return false;
+        }
+     },
+    isNonNegativeInteger: function (text) { 
+        if (validator.isInteger(text)) {
+            text = Number(text);
+            if (text >= 0) {
+                return true;
+            }
+            else {
+                this.is_valid = false;
+                return false;
+            }
+        }
+        else {
+            this.is_valid = false;
+            return false;
+        }
+     },
+    isInRange: function (text, m, n) { 
+        if (!validator.isNumeric(text)) {
+            this.is_valid = false;
+            return false;
+        }
+        if (typeof m !== "undefined") {
+            if (!validator.isNumeric(m)) {
+                this.is_valid = false;
+                return false;
+            }
+            if (Number(text) < Number(m)) {
+                this.is_valid = false;
+                return false;
+            } 
+        }
+        if (typeof n !== "undefined") {
+            if (!validator.isNumeric(n)) {
+                this.is_valid = false;
+                return false;
+            }
+            if (Number(text) > Number(n)) {
+                this.is_valid = false;
+                return false;
+            } 
+        }      
+        return true;
+     },
+    isValidEmail: function (text) { 
+        let re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
+        if (re.test(text)) {
+            return true;
+        }
+        else {
+            this.is_valid = false;
+            return false;
+        }
+     },
+    isNonEmpty: function (obj) { 
+        if (typeof obj === "boolean") {
+            return true;
+        }
+        if (obj === 0) {
+            return true;
+        }
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return true;
+        }
+        this.is_valid = false;
+        return false;
+     },
+    matchesRegex: function (text, regex) { 
+        let re = new RegExp(regex);
+        if (re.test(text)) {
+            return true;
+        }
+        else {
+            this.is_valid = false;
+            return false;
+        }
+     },
+    lengthIsInRange: function (text, m, n) { 
+        if (typeof text !== "string") {
+            this.is_valid = false;
+            return false;
+        }
+        validator.isInRange(text.length, m, n);
+     },
+    isValid: function () { 
+        return this.is_valid;
+    },
+    reset: function () { this.is_valid = true; },
+    logStatus: function () {
+        if (validator.isValid()) {
+            console.log('All is well');
+        } else {
+            console.log('Something failed validation'); }
+    },
+    logNegativeStatus: function () {
+        if (validator.isValid()) {
+            console.log('Something failed validation');
+        } else {
+            console.log('All is well'); } 
+    }
+    };
+   }());
+
+
+   validator.reset();
+   validator.isNumeric(5);
+   validator.isNumeric('5');
+   validator.isInteger(5);
+   validator.isInteger('50');
+   validator.logStatus();
+
+   validator.isInteger("one");
+   validator.logNegativeStatus();
+   validator.reset();
+   validator.isPositiveInteger(5);
+   validator.isNegativeInteger(-5);
+   validator.logStatus();
+
+   validator.isNegativeInteger(-5.6);
+   validator.logNegativeStatus();
+   validator.reset();
+
+   validator.isNonNegativeInteger(0);
+   validator.isInRange(50, "4", "1000");
+   validator.isInRange("50", 4, "1000");
+   validator.isValidEmail("kylebharrison16@gmail.com");
+   validator.isValidEmail("kyle@c.d");
+   validator.isNonEmpty(false);
+   validator.isNonEmpty(".");
+   validator.logStatus();
+
+   validator.lengthIsInRange("12345", 5, 5);
+   validator.matchesRegex("hello", "^hello[, my friend]?");
+   validator.isNonEmpty("89");
+   validator.logStatus();
+
+</script>
+
